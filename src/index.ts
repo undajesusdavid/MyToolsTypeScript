@@ -1,5 +1,5 @@
 import express from 'express';
-import { RouterApi } from './routes/index.js';
+import { RouterApi } from './infraestructure/entrada/express/routes/index.js';
 
 const app = express();
 const port = 3000;

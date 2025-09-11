@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { obtenerExportDefaultsDelDirectorio } from "../utils/toolsFS.js";
+import { obtenerExportDefaultsDelDirectorio } from "../../../utils/toolsFS.js";
 import type { Router } from "express";
 
 const __filename: string = fileURLToPath(import.meta.url);
