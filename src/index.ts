@@ -18,9 +18,12 @@
 import { normalizarRutaDelDirectorio } from "./infraestructure/utils/buildDirectoryPath.js";
 
 (async () => {
-  const ruta = await normalizarRutaDelDirectorio("/src/infraestructure");
-  console.log(ruta)
-
+  try {
+    const ruta = await normalizarRutaDelDirectorio("/src/infraestructure");
+    console.log(ruta)
+  } catch (error) {
+    console.log(error);
+  }
 })()
 
 
