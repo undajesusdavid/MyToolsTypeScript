@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs/promises";
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import * as myErrors from "./Errors.js";
 import type { Dirent } from "fs";
 
@@ -8,12 +8,13 @@ export class FilteredDirectoryFiles {
     protected dirPathSystem: string;
     protected fileExclude: string;
 
-    private constructor(dirPathSystem: string, fileExclude: string) {
+    constructor(fileURL: string) {
+        const {dirPathSystem, fileExclude} = this.parseURL(fileURL);
         this.dirPathSystem = dirPathSystem;
         this.fileExclude = fileExclude;
     }
 
-    static create(fileURL: string) {
+    private parseURL(fileURL: string) {
         if (!fileURL || typeof fileURL !== 'string') {
             throw new myErrors.ErrorInvalidURL(fileURL, "La URL proporcionada está vacía o no es una cadena.");
         }
@@ -23,14 +24,14 @@ export class FilteredDirectoryFiles {
             const dirPathSystem = path.dirname(pathSystem);
             const fileExclude = path.basename(pathSystem);
 
-            return new FilteredDirectoryFiles(dirPathSystem, fileExclude);
+            return {dirPathSystem, fileExclude};
         } catch (e) {
             if (e instanceof Error && 'code' in e) {
                 if (e.code === "ERR_INVALID_URL") {
                     throw new myErrors.ErrorInvalidURL(fileURL, "el formato no es una URL valida");
                 }
             }
-            throw new myErrors.UnknownError(e, "generado en la clase FilteredDirectoryFiles, (funcion create) ");
+            throw new myErrors.UnknownError(e, "generado en la funcion parseURL ");
         }
     }
 
@@ -52,7 +53,7 @@ export class FilteredDirectoryFiles {
             const dirents = await fs.readdir(this.dirPathSystem, { recursive: true, withFileTypes: true });
             const filteredDirents = this.filterFiles(dirents, extension, exclude || []);
             if (callBack) {
-                return callBack(filteredDirents) as string[];
+                return callBack(filteredDirents);
             } else {
                 return filteredDirents.map(dirent => dirent.name);
             }
@@ -64,7 +65,7 @@ export class FilteredDirectoryFiles {
                 if (e.code === "ENOTDIR") throw new myErrors.DirectoryPointsToFile(this.dirPathSystem);
             }
 
-            throw new myErrors.UnknownError(e, "generado en la clase FilteredDirectoryFiles, (funcion getFiles)");
+            throw new myErrors.UnknownError(e, "generado en la funcion getFiles");
         }
     }
 
@@ -74,7 +75,13 @@ export class FilteredDirectoryFiles {
 
     async getFilesPath(ext: string, exclude?: string[]): Promise<string[]> {
         return this.getFiles(ext, exclude, (dirents) => {
-            return dirents.map(file => path.join(this.dirPathSystem, file.name));
+            return dirents.map(file => path.join(file.parentPath, file.name));
+        })
+    }
+
+    async getFilesURL(ext: string, exclude?: string[]): Promise<string[]> {
+        return this.getFiles(ext, exclude, (dirents) => {
+            return dirents.map(file =>  pathToFileURL(path.join(file.parentPath, file.name)).href);
         })
     }
 }
