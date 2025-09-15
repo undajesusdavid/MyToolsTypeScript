@@ -1,9 +1,5 @@
-import { ImportModules } from "./import-modules/ImportModules.js";
-
+import { LoadControllers } from "./pruebas/LoadModules.js";
 
 (async () => {
-
-   const importModules = ImportModules.create(import.meta.url);
-   console.log(importModules.getAllFiles());
-   
+  await LoadControllers()
 })();
