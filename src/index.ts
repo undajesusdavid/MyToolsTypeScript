@@ -1,4 +1,4 @@
-import { LoadControllers } from "./pruebas/LoadModules.js";
+import { LoadControllers } from "./controllers/LoadControllers.js";
 
 (async () => {
   await LoadControllers()
