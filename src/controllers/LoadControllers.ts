@@ -8,6 +8,6 @@ export interface Controller {
 
 export async function LoadControllers() {
     const importModules = new ImportModules(import.meta.url);
-    const controllers = await importModules.arrayInstanceDefaultExports<Controller>();
+    const controllers = await importModules.instantiateDefaultsRecord<Controller>();
     console.log(controllers);
 }
