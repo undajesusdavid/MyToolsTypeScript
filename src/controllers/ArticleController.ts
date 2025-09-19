@@ -1,4 +1,4 @@
-export default class ArticleController{
+export class ArticleController{
 
     create = (): string => {
         return `Article created successfully.`;

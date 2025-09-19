@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath, pathToFileURL } from 'url';
-import * as myErrors from "./Errors.js";
+import * as myErrors from "../Errors/Errors.js";
 import type { Dirent } from "fs";
 
 export class FilteredDirectoryFiles {
